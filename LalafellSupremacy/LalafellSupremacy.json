@@ -1,0 +1,10 @@
+{
+  "Author": "Populo",
+  "Name": "Lalafell Supremacy",
+  "Punchline": "Turn everybody into Lalafell.",
+  "Description": "Turns everybody into a lalafell, inspired by the late 'Oops, All Lalafells!' plugin. Currently only changes to lalas, might add other races in the future. Not sure yet.",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "Other"
+  ]
+}
