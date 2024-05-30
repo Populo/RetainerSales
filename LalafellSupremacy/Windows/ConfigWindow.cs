@@ -13,12 +13,12 @@ public class ConfigWindow : Window, IDisposable
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
     // and the window ID will always be "###XYZ counter window" for ImGui
-    public ConfigWindow(LalafellSupremacy plugin) : base("A Wonderful Configuration Window###With a constant ID")
+    public ConfigWindow(LalafellSupremacy plugin) : base("Lalafell Supremacy Config Window")
     {
         Flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
                 ImGuiWindowFlags.NoScrollWithMouse;
 
-        Size = new Vector2(232, 75);
+        Size = new Vector2(350, 100);
         SizeCondition = ImGuiCond.Always;
 
         Configuration = plugin.Configuration;
@@ -36,5 +36,6 @@ public class ConfigWindow : Window, IDisposable
             // can save immediately on change, if you don't want to provide a "Save and Close" button
             Configuration.Save();
         }
+        ImGui.Text("Haven't figured out how to safely force reload all players.\nTeleport to the same area in the mean time.");
     }
 }

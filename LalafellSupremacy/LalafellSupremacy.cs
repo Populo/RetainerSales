@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Dalamud.Game.Command;
 using Dalamud.IoC;
@@ -8,6 +8,7 @@ using Dalamud.Hooking;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using LalafellSupremacy.Windows;
 using SamplePlugin;
@@ -30,6 +31,8 @@ public sealed class LalafellSupremacy : IDalamudPlugin
     private readonly byte MasterRace = 3;
     
     private unsafe delegate CharacterBase* CreateDelegate(uint modelId, CustomizeData* customize, EquipmentModelId* equipData, byte unk);
+
+    private unsafe delegate nint OnRenderModelDelegate(Model* model);
     
     private Hook<CreateDelegate>? _createHook;
 
@@ -95,8 +98,9 @@ public sealed class LalafellSupremacy : IDalamudPlugin
     {
         try
         {
-            if (modelId == 0 && Configuration.Enabled)
+            if (modelId == 0 && customize->BodyType == 1 && Configuration.Enabled)
             {
+                PluginLog.Verbose("Lalafell-ing character");
                 AdjustAttributes(customize);
             }
         }
@@ -114,7 +118,6 @@ public sealed class LalafellSupremacy : IDalamudPlugin
         customize->Face %= MaximumCustomizationNumbers["face"];
         customize->Jaw %= MaximumCustomizationNumbers["jaw"];
         customize->Eyebrows %= MaximumCustomizationNumbers["eyebrows"];
-        customize->TailShape = 1;
         customize->Nose %= MaximumCustomizationNumbers["nose"];
     }
 
