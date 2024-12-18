@@ -1,10 +1,11 @@
 {
-  "Author": "Populo",
-  "Name": "Retainer Sales",
-  "Punchline": "See retainer sales quicker",
-  "Description": "Indication that a retainer has sold something while you were logged off.",
-  "ApplicableVersion": "any",
-  "Tags": [
-    "Other"
-  ]
+    "Author": "Populo",
+    "Name": "Retainer Sales",
+    "Punchline": "See retainer sales quicker",
+    "Description": "Indication that a retainer has sold something while you were logged off.",
+    "ApplicableVersion": "any", 
+    "RepoUrl": "https://github.com/Populo/RetainerSales",
+    "Tags": [
+        "Other"
+    ]
 }
