@@ -4,10 +4,10 @@
 
   <PropertyGroup>
     <Version>1.0.0.0</Version>
-    <Description>Turn everybody into Lalafell.</Description>
-    <PackageProjectUrl>https://github.com/Populo/LalafellSupremacy</PackageProjectUrl>
+    <Description>Quickly see your offline retainer sales</Description>
+    <PackageProjectUrl>https://github.com/Populo/RetainerSales</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
-    <RootNamespace>LalafellSupremacy</RootNamespace>
+    <RootNamespace>RetainerSales</RootNamespace>
   </PropertyGroup>
 </Project>
