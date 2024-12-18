@@ -1,10 +1,9 @@
-# Lalafell Supremacy
+# Retainer Sales
 
-Dalamud plugin to turn all players into lalafell.
+Dalamud plugin to quickly see which retainers have sold things.
 
 ## Main Points
-* Very basic, not sure what you want from me.
-* One day I may add support for all races. I'm just glad I finally got this working properly
+* Very basic, if the arrows do not disappear after opening the retainer window let me know. Translations are hard.
 * PR's for improvements/bug fixes welcome
 
 ## Support
