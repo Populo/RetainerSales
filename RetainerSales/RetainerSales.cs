@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Dalamud.Plugin;
-using Dalamud.Game;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Plugin.Services;
@@ -17,7 +17,6 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
     private IPluginLog PluginLog { get; init; }
     public Configuration Configuration { get; init; }
     public IAddonLifecycle AddonLifecycle { get; init; }
-    public IClientState ClientState { get; init; }
 
     private Dictionary<string, int> RetainerSaleNumbers { get; set; } = new();
     private Dictionary<string, uint> RetainerIndex { get; set; } = new();
@@ -25,13 +24,11 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
     public RetainerSales(
         IDalamudPluginInterface pluginInterface,
         IPluginLog pluginLog,
-        IAddonLifecycle addonLifecycle,
-        IClientState clientState)
+        IAddonLifecycle addonLifecycle)
     {
         PluginInterface = pluginInterface ?? throw new ArgumentNullException(nameof(pluginInterface));
         PluginLog = pluginLog ?? throw new ArgumentNullException(nameof(pluginLog));
         AddonLifecycle = addonLifecycle ?? throw new ArgumentNullException(nameof(addonLifecycle));
-        ClientState = clientState ?? throw new ArgumentNullException(nameof(clientState));
 
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(PluginInterface);
@@ -51,7 +48,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
 
     private void HandleOpen(AddonEvent type, AddonArgs args)
     {
-        PluginLog.Info("RetainerList Opened");
+        PluginLog.Verbose("RetainerList Opened");
         try
         {
             var manager = RetainerManager.Instance();
@@ -114,15 +111,32 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
             var titleTextNode = (AtkTextNode*)addon->GetNodeById(2);
 
             var titleText = titleTextNode->NodeText.ToString();
-            var retName = ClientState.ClientLanguage switch
-            {
-                ClientLanguage.Japanese => titleText.Split('\r').Last().Replace("）", "").Replace("（", ""),
-                ClientLanguage.German => titleText.Split("Du hast ").Last().Split(" herbeigerufen").First(),
-                ClientLanguage.French => titleText.Split("Menu de ").Last().Split(" [").First(),
-                ClientLanguage.English => titleText.Split('\r').First().Split(": ").Last(),
-                _ => ""
-            };
-            PluginLog.Verbose(retName);
+            //var timer = new Stopwatch();
+            string retName = "";
+            // timer.Start();
+            // retName = ClientState.ClientLanguage switch
+            // {
+            //     ClientLanguage.Japanese => titleText.Split('\r').Last().Replace("）", "").Replace("（", ""),
+            //     ClientLanguage.German => titleText.Split("Du hast ").Last().Split(" herbeigerufen").First(),
+            //     ClientLanguage.French => titleText.Split("Menu de ").Last().Split(" [").First(),
+            //     ClientLanguage.English => titleText.Split('\r').First().Split(": ").Last(),
+            //     _ => ""
+            // };
+            // timer.Stop();
+            // PluginLog.Verbose($"{retName}(old) -> {timer.ElapsedTicks} ticks");
+            // retName = ""; // shouldnt be necessary but want to make assignment consistent
+            // timer.Reset();
+            // timer.Start();
+            
+            // 2 retainers, named aaa and aaaaaa, want to make sure we get aaaaa if we click on that one.
+            // ~50 ticks slower than the text splitting to find retainer name but i feel like this is more consistent
+            retName = RetainerSaleNumbers.Where(r => titleText.Contains(r.Key))
+                                         .OrderByDescending(r => r.Key.Length)
+                                         .First()
+                                         .Key;
+            // timer.Stop();
+            // PluginLog.Verbose($"{retName}(new) -> {timer.ElapsedTicks} ticks");
+            PluginLog.Info($"Retainer: {retName}");
 
             RetainerIndex.Remove(retName);
             Configuration.ItemsForSale[retName] = RetainerSaleNumbers[retName];
