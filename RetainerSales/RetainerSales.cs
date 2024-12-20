@@ -20,6 +20,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
 
     private Dictionary<string, int> RetainerSaleNumbers { get; set; } = new();
     private Dictionary<string, uint> RetainerIndex { get; set; } = new();
+    private string OpenedRetainer { get; set; } = string.Empty;
 
     public RetainerSales(
         IDalamudPluginInterface pluginInterface,
@@ -60,10 +61,19 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
                     Configuration.ItemsForSale[retainer->NameString] = retainer->MarketItemCount;
 
                 RetainerSaleNumbers[retainer->NameString] = retainer->MarketItemCount;
-
+                
                 if (Configuration.ItemsForSale[retainer->NameString] > retainer->MarketItemCount)
                 {
-                    RetainerIndex[retainer->NameString] = i;
+                    if (OpenedRetainer != retainer->NameString)
+                    {
+                        RetainerIndex[retainer->NameString] = i;
+                    }
+                    else
+                    {
+                        OpenedRetainer = "";
+                        Configuration.ItemsForSale[retainer->NameString] = retainer->MarketItemCount;
+                        Configuration.Save();
+                    }
                 }
                 else if (Configuration.ItemsForSale[retainer->NameString] < retainer->MarketItemCount)
                 {
@@ -138,6 +148,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
             // PluginLog.Verbose($"{retName}(new) -> {timer.ElapsedTicks} ticks");
             PluginLog.Info($"Retainer: {retName}");
 
+            OpenedRetainer = retName;
             RetainerIndex.Remove(retName);
             Configuration.ItemsForSale[retName] = RetainerSaleNumbers[retName];
             Configuration.Save();
