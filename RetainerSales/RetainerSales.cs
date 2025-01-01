@@ -124,6 +124,14 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
             var titleTextNode = (AtkTextNode*)addon->GetNodeById(2);
 
             var titleText = titleTextNode->NodeText.ToString();
+            var curr = CurrencyManager.Instance()->ItemBucket[21072].Count;
+            PluginLog.Verbose($"{curr} ventures");
+
+            if (!titleText.Contains(curr.ToString()))
+            {
+                PluginLog.Verbose($"Addon does not appear to be retainer screen, ignoring.");
+                return;
+            }
             
             var retName = ClientState.ClientLanguage switch
             {
