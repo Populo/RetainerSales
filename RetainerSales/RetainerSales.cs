@@ -19,8 +19,8 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
     public IAddonLifecycle AddonLifecycle { get; init; }
     public IClientState ClientState { get; init; }
 
-    private Dictionary<string, int> RetainerSaleNumbers { get; set; } = new();
-    private Dictionary<string, uint> RetainerIndex { get; set; } = new();
+    private Dictionary<string, byte> RetainerSaleNumbers { get; set; } = new();
+    private Dictionary<string, byte> RetainerIndex { get; set; } = new();
     private string OpenedRetainer { get; set; } = string.Empty;
 
     public RetainerSales(
@@ -69,7 +69,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
                 {
                     if (OpenedRetainer != retainer->NameString)
                     {
-                        RetainerIndex[retainer->NameString] = i;
+                        RetainerIndex[retainer->NameString] = (byte)i;
                     }
                     else
                     {
@@ -101,7 +101,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
             foreach (var ret in RetainerIndex)
             {
                 var retRow = GetNodeByID<AtkComponentNode>(&retainerListNode->Component->UldManager,
-                                                           ret.Value == 0 ? 4 : 41000 + ret.Value,
+                                                           ret.Value == 0 ? 4u : 41000u + ret.Value,
                                                            (NodeType)1011);
 
                 var saleColumn = (AtkTextNode*)retRow->Component->UldManager.SearchNodeById(11);
