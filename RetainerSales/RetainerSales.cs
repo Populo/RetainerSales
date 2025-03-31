@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
@@ -124,29 +122,21 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
             var titleTextNode = (AtkTextNode*)addon->GetNodeById(2);
 
             var titleText = titleTextNode->NodeText.ToString();
-            var curr = CurrencyManager.Instance()->ItemBucket[21072].Count;
-            PluginLog.Verbose($"{curr} ventures");
+            var currentRetainer = RetainerManager.Instance()->GetActiveRetainer();
 
-            if (!titleText.Contains(curr.ToString()))
+            if (IntPtr.Zero == (IntPtr)currentRetainer || !titleText.Contains(currentRetainer->NameString))
             {
                 PluginLog.Verbose($"Addon does not appear to be retainer screen, ignoring.");
                 return;
             }
             
-            var retName = ClientState.ClientLanguage switch
-            {
-                ClientLanguage.Japanese => titleText.Split('\r').Last().Replace("）", "").Replace("（", ""),
-                ClientLanguage.German => titleText.Split("Du hast ").Last().Split(" herbeigerufen").First(),
-                ClientLanguage.French => titleText.Split("Menu de ").Last().Split(" [").First(),
-                ClientLanguage.English => titleText.Split('\r').First().Split(": ").Last(),
-                _ => ""
-            };
+            var retName = currentRetainer->NameString;
 
 #pragma warning disable CA1854
             if (!RetainerSaleNumbers.ContainsKey(retName))
 #pragma warning restore CA1854
             {
-                PluginLog.Error($"Could not find retainer name, got {retName}. Create an issue in the github or send a dm to @populo on discord with a screenshot of this error.");
+                PluginLog.Error($"Could not find retainer name, got {retName}. Please use the feedback button and mention which window you are opening to cause this error.");
             }
             else
             {
