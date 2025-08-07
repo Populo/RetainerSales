@@ -93,7 +93,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
     {
         try
         {
-            var addon = (AtkUnitBase*)args.Addon;
+            var addon = (AtkUnitBase*)args.Addon.Address;
             var retainerListNode = (AtkComponentNode*)addon->GetNodeById(27);
 
             foreach (var ret in RetainerIndex)
@@ -118,7 +118,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
     {
         try
         {
-            var addon = (AtkUnitBase*)args.Addon;
+            var addon = (AtkUnitBase*)args.Addon.Address;
             var titleTextNode = (AtkTextNode*)addon->GetNodeById(2);
 
             var titleText = titleTextNode->NodeText.ToString();
