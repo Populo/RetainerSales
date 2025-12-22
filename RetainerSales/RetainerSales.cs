@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Dalamud.Plugin;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
@@ -9,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace RetainerSales;
 
+[SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
 public sealed unsafe class RetainerSales : IDalamudPlugin
 {
     private IDalamudPluginInterface PluginInterface { get; init; }
@@ -51,6 +53,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
     private void HandleOpen(AddonEvent type, AddonArgs args)
     {
         PluginLog.Verbose("RetainerList Opened");
+        var now = DateTime.Now;
         try
         {
             var manager = RetainerManager.Instance();
@@ -67,6 +70,13 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
                 {
                     if (OpenedRetainer != retainer->NameString)
                     {
+                        var expire = retainer->MarketExpire;
+                        if (now > DateTimeOffset.FromUnixTimeSeconds(expire).LocalDateTime)
+                        {
+                            PluginLog.Info("Retainer market expired, skipping.");
+                            continue;
+                        }
+                        
                         RetainerIndex[retainer->NameString] = (byte)i;
                     }
                     else
@@ -131,10 +141,8 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
             }
             
             var retName = currentRetainer->NameString;
-
-#pragma warning disable CA1854
-            if (!RetainerSaleNumbers.ContainsKey(retName))
-#pragma warning restore CA1854
+            
+            if (!RetainerSaleNumbers.TryGetValue(retName, out var number))
             {
                 PluginLog.Error($"Could not find retainer name, got {retName}. Please use the feedback button and mention which window you are opening to cause this error.");
             }
@@ -144,7 +152,7 @@ public sealed unsafe class RetainerSales : IDalamudPlugin
 
                 OpenedRetainer = retName;
                 RetainerIndex.Remove(retName);
-                Configuration.ItemsForSale[retName] = RetainerSaleNumbers[retName];
+                Configuration.ItemsForSale[retName] = number;
                 Configuration.Save();
             }
             
