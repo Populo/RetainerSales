@@ -7,3 +7,6 @@ Dalamud plugin to quickly see which retainers have sold things.
 
 ## Support
 * Discord: @populo
+
+## AI Usage
+* Mostly Hint with a splash of some Assist
